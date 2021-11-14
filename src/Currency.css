@@ -1,0 +1,67 @@
+.currency-container {
+  display: flex;
+  justify-content: center;
+}
+
+.currency-row {
+  display: flex;
+  flex-direction: row;
+  justify-items: start;
+  align-items: center;
+  height: 80px;
+  width: 950px;
+  border-bottom: 1px solid #d7d7d7;
+}
+
+.currency {
+  display: flex;
+  align-items: center;
+  padding-right: 24px;
+  min-width: 300px;
+}
+
+.currency img {
+  height: 30px;
+  width: 30px;
+  margin-right: 10px;
+}
+
+.currency h1 {
+  font-size: 16px;
+  width: 150px;
+}
+
+.currency-symbol {
+  text-transform: uppercase;
+}
+
+.currency-data {
+  display: flex;
+  text-align: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.currency-price {
+  width: 110px;
+}
+
+.currency-volume {
+  width: 200px;
+}
+
+.currency-marketcap {
+  width: 240px;
+}
+
+.currency-percent {
+  width: 80px;
+}
+
+.red {
+  color: #f00606;
+}
+
+.green {
+  color: #11d811;
+}
