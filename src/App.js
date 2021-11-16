@@ -1,41 +1,31 @@
-import React, { useEffect, useState } from 'react'
-import axios from 'axios'
-import './App.css'
+import React, { useEffect } from 'react'
 import Currency from './Currency'
 import ReactExport from 'react-data-export'
+import { fetchData, filterCoins } from './redux/actionCreators'
+import { useDispatch, useSelector } from 'react-redux'
+import Loader from './features/Loader'
 
 const ExcelFile = ReactExport.ExcelFile
 const ExcelSheet = ReactExport.ExcelFile.ExcelSheet
 
-const API =
+export const API =
   'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=false'
 
 function App() {
-  const [coins, setCoins] = useState([])
-  const [query, setQuery] = useState('')
-
-  const fetchData = async () => {
-    try {
-      const res = await axios.get(API)
-      setCoins(res.data)
-    } catch (err) {
-      throw new Error(err)
-    }
-  }
+  const coins = useSelector((state) => state.coins.coins)
+  const filteredCoins = useSelector((state) => state.coins.filteredCoins)
+  const loading = useSelector((state) => state.coins.loading)
+  const dispatch = useDispatch()
 
   useEffect(() => {
-    fetchData()
-  }, [])
+    dispatch(fetchData())
+  }, [dispatch])
 
   const handleChange = (e) => {
-    setQuery(e.target.value)
+    dispatch(filterCoins(e.target.value, coins))
   }
 
-  const filteredCoins = coins.filter((coin) =>
-    coin.name.toLowerCase().includes(query.toLowerCase())
-  )
-
-  const DataSet = [
+  const dataSet = [
     {
       columns: [
         {
@@ -116,11 +106,11 @@ function App() {
             onChange={handleChange}
           />
         </form>
-        <div className='btn-container'>
-          <button className='btn' onClick={fetchData}>
-            Update the data
-          </button>
-          {filteredCoins.length > 0 && (
+        {filteredCoins.length > 0 && (
+          <div className='btn-container'>
+            <button className='btn' onClick={() => dispatch(fetchData())}>
+              Update the data
+            </button>
             <ExcelFile
               filename='Crypto Data'
               element={
@@ -129,12 +119,13 @@ function App() {
                 </button>
               }
             >
-              <ExcelSheet dataSet={DataSet} name='Crypto Data'></ExcelSheet>
+              <ExcelSheet dataSet={dataSet} name='Crypto Data'></ExcelSheet>
             </ExcelFile>
-          )}
-        </div>
+          </div>
+        )}
       </div>
-      {filteredCoins.length === 0 && <h1>No coins found</h1>}
+      {loading && <Loader />}
+      {filteredCoins.length === 0 && !loading && <h1>No coins found</h1>}
       {filteredCoins.map((coin) => {
         return (
           <Currency
